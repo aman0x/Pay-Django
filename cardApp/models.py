@@ -3,16 +3,6 @@ from userApp.models import CustomUser
 from django.core.exceptions import ValidationError
 import re
 
-USER_ACCOUNT_TYPE = (
-    ("INDIVIDUAL", "Individual"),
-    ("BUSINESS", "Business")
-)
-
-BANK_ACCOUNT_TYPE = (
-    ("SAVINGS", "Savings"),
-    ("CURRENT", "Current")
-)
-
 class Card(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     card_holder_name = models.CharField(max_length=200, blank=True, null=True)
