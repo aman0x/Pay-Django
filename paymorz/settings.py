@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     "accountApp",
     "supportApp",
     "cardApp",
+    "paymentApp",
+    "invoiceApp",
 ]
 
 MIDDLEWARE = [
