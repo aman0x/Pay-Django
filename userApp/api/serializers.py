@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from userApp.models import CustomUser, Kyc
 
-class CustomUserSerializer(serializers.ModelSerializer):
+class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model=CustomUser
         fields= "__all__"

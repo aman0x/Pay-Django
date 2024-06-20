@@ -25,6 +25,7 @@ class CustomUser(models.Model):
     company_adhaar_no = models.CharField(max_length=12, default=None, blank=True, null=True)
     otp = models.IntegerField(blank=True, null=True)
     is_social_login = models.BooleanField(default=False)
+    social_login_uid = models.CharField(max_length=200, blank=True, null=True)
     custom_user = models.OneToOneField(
         User, related_name="custom_user", on_delete=models.CASCADE, null=True, blank=True)
 
@@ -69,7 +70,7 @@ class Kyc(models.Model):
     document_name = models.CharField(max_length=200)
     document_id = models.CharField(max_length=200)
     document_image = models.ImageField(
-        upload_to="kyc-image/document/%y/%m/%d", default=None, null=True)
+        upload_to="images/kyc/%y/%m/%d", default=None, null=True)
 
     def __str__(self):
         return self.name
