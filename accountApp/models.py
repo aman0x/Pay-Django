@@ -21,6 +21,8 @@ class BankAccount(models.Model):
     bank_account_type = models.CharField(max_length=20, choices=BANK_ACCOUNT_TYPE, default="SAVINGS")
     pan_no = models.CharField(max_length=200, blank=True, null=True)
     gstin_no = models.CharField(max_length=200, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True)
+    modified_at = models.DateTimeField(auto_now=True, blank=True)
     
     def __str__(self):
         return f"{self.account_name} {self.account_number}"
@@ -34,6 +36,8 @@ class Beneficiary(models.Model):
     bank_account_type = models.CharField(max_length=20, choices=BANK_ACCOUNT_TYPE, default="SAVINGS")
     pan_no = models.CharField(max_length=200, blank=True, null=True)
     gstin_no = models.CharField(max_length=200, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True)
+    modified_at = models.DateTimeField(auto_now=True, blank=True)
     is_verified = models.BooleanField(default=False)
     
     def __str__(self):

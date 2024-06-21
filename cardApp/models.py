@@ -10,6 +10,8 @@ class Card(models.Model):
     expiry_date = models.CharField(max_length=5, blank=True, null=True)
     cvv_no = models.CharField(max_length=3, blank=True, null=True)
     status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True)
+    modified_at = models.DateTimeField(auto_now=True, blank=True)
     
     def __str__(self):
         return f"{self.user} {self.card_no}"

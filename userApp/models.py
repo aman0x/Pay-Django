@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import IntegrityError
-import random
 
 ACCOUNT_TYPE = (
     ("INDIVIDUAL", "Individual"),
@@ -26,6 +25,8 @@ class CustomUser(models.Model):
     otp = models.IntegerField(blank=True, null=True)
     is_social_login = models.BooleanField(default=False)
     social_login_uid = models.CharField(max_length=200, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True)
+    modified_at = models.DateTimeField(auto_now=True, blank=True)
     custom_user = models.OneToOneField(
         User, related_name="custom_user", on_delete=models.CASCADE, null=True, blank=True)
 
@@ -71,6 +72,8 @@ class Kyc(models.Model):
     document_id = models.CharField(max_length=200)
     document_image = models.ImageField(
         upload_to="images/kyc/%y/%m/%d", default=None, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True)
+    modified_at = models.DateTimeField(auto_now=True, blank=True)
 
     def __str__(self):
         return self.name
