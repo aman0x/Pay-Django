@@ -8,4 +8,4 @@ class ReportMonthlyReportSerializer(serializers.Serializer):
     account_type = serializers.CharField(read_only=True)
     transaction_id = serializers.CharField(read_only=True)
     status = serializers.CharField(read_only=True)
-    sum = serializers.IntegerField(read_only=True)
+    sum = serializers.FloatField(read_only=True)

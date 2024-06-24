@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_extensions",
     "phonenumber_field",
     "rest_framework",
     "userApp",
@@ -116,4 +117,9 @@ COMMON_STATUS = {
     "unauthorized": {"code": 401, "message": "You are not authorized to perform this action"},
     "not_found": {"code": 404, "message": "The requested resource was not found"},
     "internal_server_error": {"code": 500, "message": "An internal server error occurred"},
+}
+
+GRAPH_MODELS ={
+    'all_applications': True,
+    'graph_models': True,
 }
