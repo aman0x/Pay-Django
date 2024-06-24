@@ -83,7 +83,7 @@ class DashboardLatestActionsViewSet(views.APIView):
             "ifsc_code": "HDFC000162",
             "transaction_amount" : 100000,
             "transaction_id" : "TD136347383DR82",
-            "transaction_status" : "Pending",
+            "transaction_status" : "In Progress",
         }
         serializer = DashboardLatestActionsSerializer(data)
         return Response(serializer.data)
