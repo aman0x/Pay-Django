@@ -53,11 +53,55 @@ class InoviceAllInvoiceViewSet(views.APIView):
             "date" : "2024-06-21T10:21:17.116232Z",
             "recipient": "ANANTHARAPU ARUNA THEJASWINI",
             "type" : "Vendor_Payment",
-            "bank": "HDFC Bank",
+            "bank": "HDFC Bank , KODAD, HDFC0001642",
             "account_type": "Current",
             "transaction_id" : "TD1711364044252",
             "status" : "Succeeded",
             "sum": 23000.56
         }
         serializer = InvoiceAllInvoiceSerializer(data)
+        return Response(serializer.data)
+    
+class InvoiceDetailsViewSet(views.APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        data = {
+            "status" : "In Progress",
+            "invoice_title" : "Vendor_Payment",
+            "invoice_id" : "TD1711364044252",
+            "date" : "2024-06-21T10:21:17.116232Z",
+            "particulars" : "Vendor_Payment",
+            "quantity" : 1,
+            "price_per_quantity" : 24000.24,
+            "amount" : 24000.24,
+            "gst" : 20,
+            "subtotal" : 24000.24,
+            "name" : "ANANTHARAPU ARUNA THEJASWINI",
+            "phone_number" : "+919573749630",
+            "email" : "customer@mail.com",
+            "account_number" : "50100350093919",
+            "bank" : "HDFC Bank",
+            "bank_branch" : "KODAD",
+            "ifsc_code" : "HDFC0001642",
+            "total_amount" : 24000.24,
+        }
+        serializer = InvoiceDetailsSerializer(data)
+        return Response(serializer.data)
+    
+class InvoiceNewInvoicesViewSet(views.APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        data = {
+            "invoice_title" : "Vendor_Payment",
+            "invoice_id" : "TD1711364044252",
+            "date" : "2024-06-21T10:21:17.116232Z",
+            "name" : "ANANTHARAPU ARUNA THEJASWINI",
+            "bank" : "HDFC Bank",
+            "bank_branch" : "KODAD",
+            "ifsc_code" : "HDFC0001642",
+            "total_amount" : 24000.24,
+        }
+        serializer = InvoiceNewInvoicesSerializer(data)
         return Response(serializer.data)

@@ -10,4 +10,6 @@ urlpatterns = [
     path('sent-dashboard/', views.InvoiceSentDashboardViewSet.as_view(), name="invoice-sent-dashboard"),
     path('received-dashboard/', views.InvoiceReceivedDashboardViewSet.as_view(), name="invoice-received-dashboard"),
     path('all-invoices/', views.InoviceAllInvoiceViewSet.as_view(), name="all-invoices"),
+    path('invoice-details/', views.InvoiceDetailsViewSet.as_view(), name="invoice-details"),
+    path('new-invoices/', views.InvoiceNewInvoicesViewSet.as_view(), name="new-invoices"),
 ]
