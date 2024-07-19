@@ -42,7 +42,8 @@ class LoginView(views.APIView):
     authentication_classes = []
 
     def post(self, request):
-        initialize_firebase()
+        a = initialize_firebase()
+        print(a)
         data = request.data
         email = data.get("email")
         password = data.get("password")
