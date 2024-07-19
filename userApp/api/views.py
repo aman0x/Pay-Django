@@ -48,7 +48,7 @@ class LoginView(views.APIView):
         email = data.get("email")
         password = data.get("password")
         phone = data.get("phone")
-        firbase_id_token = data.get("firbase_id_token")
+        firebase_id_token = data.get("firebase_id_token")
         is_social_login = data.get("is_social_login")
 
         if is_social_login is True:
@@ -57,7 +57,7 @@ class LoginView(views.APIView):
                 # cred = credentials.Certificate("../../paymorz/firebase-config.json")
                 # print(cred)
                 # firebase_admin.initialize_app(cred)
-                decoded_token = auth.verify_id_token(firbase_id_token)
+                decoded_token = auth.verify_id_token(firebase_id_token)
                 firebase_user_uid = decoded_token["uid"]
                 firebase_user_email = decoded_token.get("email")
                 firebase_user_name = decoded_token.get("name")
