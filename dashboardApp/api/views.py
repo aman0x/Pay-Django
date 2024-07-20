@@ -22,8 +22,30 @@ class DashboardTotalMonthSpendingsViewSet(views.APIView):
         data = {
             "card_number": "1234567824681257",
             "card_type": "VISA",
-            "incomes": "10000",
-            "expenses": "9000"
+            "monthly_income": {
+                "Apr": 400,
+                "May": 500,
+                "Jun": 400,
+                "Jul": 600,
+                "Aug": 600,
+                "Sep": 800,
+                "Oct": 700,
+                "Nov": 600,
+                "Dec": 300,
+            },
+            "monthly_expenses":  {
+                "Apr": 500,
+                "May": 600,
+                "Jun": 300,
+                "Jul": 700,
+                "Aug": 800,
+                "Sep": 300,
+                "Oct": 500,
+                "Nov": 600,
+                "Dec": 400,
+            },
+            "incomes": 10000,
+            "expenses": 9000
         }
         serializer = DashboardTotalMonthSpendingsSerializer(data)
         return Response(serializer.data)
@@ -64,7 +86,7 @@ class DashboardStatsViewSet(views.APIView):
     def get(self, request):
         data = {
             "total_payments": 240000.70,
-            "invoice_sended": 12,
+            "invoice_sent": 12,
             "invoice_received": 2
         }
         serializer = DashboardStatsSerializer(data)
