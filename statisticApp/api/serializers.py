@@ -17,12 +17,14 @@ class StatisticTransactionDashboardSerializer(serializers.Serializer):
     total_successful_invoices = serializers.IntegerField(read_only=True)
     total_recieved_amount = serializers.FloatField(read_only=True)
     total_paid_tax = serializers.FloatField(read_only=True)
+    monthly_income = serializers.DictField(child=serializers.IntegerField())
+    monthly_expenses = serializers.DictField(child=serializers.IntegerField())
     
 class StatisticInvoiceSentDashboardSerializer(serializers.Serializer):
     card_number = serializers.CharField(read_only=True)
     incomes = serializers.FloatField(read_only=True)
-    total_sended_invoices = serializers.IntegerField(read_only=True)
-    today_sended_invoices = serializers.IntegerField(read_only=True)
+    total_sent_invoices = serializers.IntegerField(read_only=True)
+    today_sent_invoices = serializers.IntegerField(read_only=True)
     succeeded = serializers.IntegerField(read_only=True)
     in_progress = serializers.IntegerField(read_only=True)
     failed = serializers.IntegerField(read_only=True)
@@ -36,6 +38,7 @@ class StatisticInvoiceSentDashboardSerializer(serializers.Serializer):
     total_successful_invoices = serializers.IntegerField(read_only=True)
     total_recieved_amount = serializers.FloatField(read_only=True)
     total_paid_tax = serializers.FloatField(read_only=True)
+    monthly_invoice_sent = serializers.DictField(child=serializers.IntegerField())
     
 class StatisticInvoiceReceivedDashboardSerializer(serializers.Serializer):
     card_number = serializers.CharField(read_only=True)
@@ -55,6 +58,7 @@ class StatisticInvoiceReceivedDashboardSerializer(serializers.Serializer):
     total_successful_invoices = serializers.IntegerField(read_only=True)
     total_paid_amount = serializers.FloatField(read_only=True)
     total_paid_tax = serializers.FloatField(read_only=True)
+    monthly_invoice_received = serializers.DictField(child=serializers.IntegerField())
     
 class StatisticTransactionListSerializer(serializers.Serializer):
     date = serializers.DateTimeField(read_only=True)

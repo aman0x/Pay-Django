@@ -23,7 +23,29 @@ class StatisticTransactionDashboardViewSet(views.APIView):
             "today_payments" : 12,
             "total_successful_invoices" : 500,
             "total_recieved_amount" : 24000.24,
-            "total_paid_tax" : 240.24
+            "total_paid_tax" : 240.24,
+            "monthly_income": {
+                "Apr": 400,
+                "May": 500,
+                "Jun": 400,
+                "Jul": 600,
+                "Aug": 600,
+                "Sep": 800,
+                "Oct": 700,
+                "Nov": 600,
+                "Dec": 300,
+            },
+            "monthly_expenses":  {
+                "Apr": 500,
+                "May": 600,
+                "Jun": 300,
+                "Jul": 700,
+                "Aug": 800,
+                "Sep": 300,
+                "Oct": 500,
+                "Nov": 600,
+                "Dec": 400,
+            },
         }
         serializer = StatisticTransactionDashboardSerializer(data)
         return Response(serializer.data)
@@ -35,8 +57,8 @@ class StatisticInvoiceSentDashboardViewSet(views.APIView):
         data = {
             "card_number" : "1234567824681257",
             "incomes" : 24000.70,
-            "total_sended_invoices" : 1200,
-            "today_sended_invoices" : 4,
+            "total_sent_invoices" : 1200,
+            "today_sent_invoices" : 4,
             "succeeded" : 12,
             "in_progress" : 12,
             "failed" : 12,
@@ -49,7 +71,18 @@ class StatisticInvoiceSentDashboardViewSet(views.APIView):
             "today_failed" : 12,
             "total_successful_invoices" : 500,
             "total_recieved_amount" : 24000.24,
-            "total_paid_tax" : 240.24
+            "total_paid_tax" : 240.24,
+            "monthly_invoice_sent": {
+                "Apr": 400,
+                "May": 500,
+                "Jun": 400,
+                "Jul": 600,
+                "Aug": 600,
+                "Sep": 800,
+                "Oct": 700,
+                "Nov": 600,
+                "Dec": 300,
+            },
         }
         serializer = StatisticInvoiceSentDashboardSerializer(data)
         return Response(serializer.data)
@@ -75,7 +108,18 @@ class StatisticInvoiceReceivedDashboardViewSet(views.APIView):
             "today_failed" : 12,
             "total_successful_invoices" : 500,
             "total_paid_amount" : 24000.24,
-            "total_paid_tax" : 240.24
+            "total_paid_tax" : 240.24,
+            "monthly_invoice_received": {
+                "Apr": 400,
+                "May": 500,
+                "Jun": 400,
+                "Jul": 600,
+                "Aug": 600,
+                "Sep": 800,
+                "Oct": 700,
+                "Nov": 600,
+                "Dec": 300,
+            },
         }
         serializer = StatisticInvoiceReceivedDashboardSerializer(data)
         return Response(serializer.data)

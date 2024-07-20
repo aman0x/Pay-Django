@@ -156,6 +156,7 @@ cython_debug/
 migrations/
 images/
 firebase-config.json
+test_firebase-config.json
 .vscode/
 
 erd.dot

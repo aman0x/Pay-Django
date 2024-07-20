@@ -7,9 +7,11 @@ class DashboardQuickSendSerializer(serializers.Serializer):
 class DashboardTotalMonthSpendingsSerializer(serializers.Serializer):
     card_number = serializers.CharField(read_only=True)
     card_type = serializers.CharField(read_only=True)
-    incomes = serializers.CharField(read_only=True)
-    expenses = serializers.CharField(read_only=True)
-    
+    monthly_income = serializers.DictField(child=serializers.IntegerField())
+    monthly_expenses = serializers.DictField(child=serializers.IntegerField())
+    incomes = serializers.IntegerField(read_only=True)
+    expenses = serializers.IntegerField(read_only=True)
+
 class DashboardMyTemplateSerializer(serializers.Serializer):
     bank_name = serializers.CharField(read_only=True)
     bank_branch_name = serializers.CharField(read_only=True)
@@ -28,7 +30,7 @@ class DashboardMyCardSerializer(serializers.Serializer):
     
 class DashboardStatsSerializer(serializers.Serializer):
     total_payments = serializers.IntegerField(read_only=True)
-    invoice_sended = serializers.IntegerField(read_only=True)
+    invoice_sent = serializers.IntegerField(read_only=True)
     invoice_received = serializers.IntegerField(read_only=True)
     
 class DashboardLatestActionsSerializer(serializers.Serializer):
