@@ -30,6 +30,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_extensions",
+    "rest_framework_swagger",
+    "drf_yasg",
     "phonenumber_field",
     "rest_framework",
     "userApp",
