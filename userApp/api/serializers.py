@@ -2,7 +2,13 @@ from rest_framework import serializers
 from userApp.models import CustomUser, Kyc, CustomUser
 from django.contrib.auth import authenticate
 
-
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'middle_name', 'last_name', 'nick_name', 'email', 'phone', 'pan_no', 'adhaar_no', 'account_type', 'company_name', 'company_pan_no', 'company_adhaar_no']
+        read_only_fields = ['email']  # Assuming email should not be updated
+        
+        
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model=CustomUser

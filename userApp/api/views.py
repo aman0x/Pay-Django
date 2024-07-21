@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, generics
 from .serializers import RegisterSerializer, KycSerializer
 from userApp.models import CustomUser, Kyc
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
@@ -6,13 +6,20 @@ from rest_framework.response import Response
 from django.conf import settings
 from firebase_admin import auth
 from .firebase_init import initialize_firebase
-from .serializers import EmailLoginSerializer, OTPLoginSerializer
+from .serializers import EmailLoginSerializer, OTPLoginSerializer, UserProfileSerializer
 from rest_framework.views import APIView
 
 
 
 
 common_status = settings.COMMON_STATUS
+
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserProfileSerializer
+
+    def get_object(self):
+        return self.request.user
 
 
 class RegisterViewSet(viewsets.ModelViewSet):
