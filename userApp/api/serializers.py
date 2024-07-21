@@ -1,14 +1,18 @@
 from rest_framework import serializers
-from userApp.models import CustomUser, Kyc, CustomUser, BankAccount
+from userApp.models import CustomUser, Kyc, CustomUser, BankAccount, Beneficiary
 from django.contrib.auth import authenticate
 
 
+class BeneficiarySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Beneficiary
+        fields = ['id', 'user', 'name', 'phone_number', 'bank_account']
+        read_only_fields = ['id', 'user', 'bank_account']
 
 class BankAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = BankAccount
         fields = ['id', 'user', 'account_name', 'account_number', 'ifsc_code', 'account_type', 'account_type_2', 'gstin', 'pan']
-        ref_name = 'UserAppBankAccountSerializer' 
         read_only_fields = ['id', 'user']
 
 

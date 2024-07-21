@@ -102,3 +102,12 @@ class BankAccount(models.Model):
 
     def __str__(self):
         return f"{self.account_name} - {self.account_number}"
+    
+class Beneficiary(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='beneficiaries', on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=15)
+    bank_account = models.OneToOneField('BankAccount', on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.phone_number}"
