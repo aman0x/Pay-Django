@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "rest_framework_swagger",
     "rest_framework_simplejwt",
+    "transactionApp",
     "django_filters",
     "drf_yasg",
     "phonenumber_field",
