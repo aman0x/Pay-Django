@@ -1,18 +1,38 @@
 from rest_framework import viewsets, permissions, status, generics
-from .serializers import RegisterSerializer, KycSerializer
-from userApp.models import CustomUser, Kyc
+from userApp.models import CustomUser, Kyc, BankAccount
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework.response import Response
 from django.conf import settings
 from firebase_admin import auth
 from .firebase_init import initialize_firebase
-from .serializers import EmailLoginSerializer, OTPLoginSerializer, UserProfileSerializer
+from .serializers import RegisterSerializer, KycSerializer, EmailLoginSerializer, OTPLoginSerializer, UserProfileSerializer,BankAccountSerializer
 from rest_framework.views import APIView
 
 
 
 
 common_status = settings.COMMON_STATUS
+
+class BankAccountCreateView(generics.CreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = BankAccountSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class BankAccountListView(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = BankAccountSerializer
+
+    def get_queryset(self):
+        return BankAccount.objects.filter(user=self.request.user)
+
+class AllAddedBankAccountsView(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = BankAccountSerializer
+
+    def get_queryset(self):
+        return BankAccount.objects.filter(user=self.request.user)
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]

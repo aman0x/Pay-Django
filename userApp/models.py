@@ -77,3 +77,27 @@ class Kyc(models.Model):
 
     def __str__(self):
         return self.name
+
+
+ACCOUNT_TYPE_CHOICES = (
+    ("SAVINGS", "Savings"),
+    ("CURRENT", "Current")
+)
+
+ACCOUNT_TYPE_2_CHOICES = (
+    ("PERSONAL", "Personal"),
+    ("BUSINESS", "Business")
+)
+
+class BankAccount(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="bank_accounts")
+    account_name = models.CharField(max_length=200)
+    account_number = models.CharField(max_length=20)
+    ifsc_code = models.CharField(max_length=11)
+    account_type = models.CharField(max_length=20, choices=ACCOUNT_TYPE_CHOICES)
+    account_type_2 = models.CharField(max_length=20, choices=ACCOUNT_TYPE_2_CHOICES, blank=True, null=True)
+    gstin = models.CharField(max_length=15, blank=True, null=True)
+    pan = models.CharField(max_length=10, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.account_name} - {self.account_number}"

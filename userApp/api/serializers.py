@@ -1,14 +1,21 @@
 from rest_framework import serializers
-from userApp.models import CustomUser, Kyc, CustomUser
+from userApp.models import CustomUser, Kyc, CustomUser, BankAccount
 from django.contrib.auth import authenticate
+
+
+class BankAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BankAccount
+        fields = ['id', 'user', 'account_name', 'account_number', 'ifsc_code', 'account_type', 'account_type_2', 'gstin', 'pan']
+        ref_name = 'UserAppBankAccountSerializer' 
+        read_only_fields = ['id', 'user']
+
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['first_name', 'middle_name', 'last_name', 'nick_name', 'email', 'phone', 'pan_no', 'adhaar_no', 'account_type', 'company_name', 'company_pan_no', 'company_adhaar_no']
-        read_only_fields = ['email']  # Assuming email should not be updated
-        
-        
+        read_only_fields = ['email']  
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model=CustomUser
