@@ -2,6 +2,8 @@ from django.db import models
 from userApp.models import CustomUser
 from django.core.exceptions import ValidationError
 import re
+from django.utils import timezone
+
 
 class Card(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -10,6 +12,7 @@ class Card(models.Model):
     expiry_date = models.CharField(max_length=5, blank=True, null=True)
     cvv_no = models.CharField(max_length=3, blank=True, null=True)
     status = models.BooleanField(default=False)
+    verified_at = models.DateTimeField(default=timezone.now, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     modified_at = models.DateTimeField(auto_now=True, blank=True)
     

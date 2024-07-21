@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
 from django.db import models, IntegrityError
 from phonenumber_field.modelfields import PhoneNumberField
 from django.conf import settings
+from django.utils import timezone
+
 
 ACCOUNT_TYPE = (
     ("INDIVIDUAL", "Individual"),
@@ -110,5 +112,8 @@ class Beneficiary(models.Model):
     phone_number = models.CharField(max_length=15)
     bank_account = models.OneToOneField('BankAccount', on_delete=models.CASCADE, null=True, blank=True)
     verified = models.BooleanField(default=False)
+    verified_at = models.DateTimeField(default=timezone.now, blank=True)
+
+
     def __str__(self):
         return f"{self.name} - {self.phone_number}"
