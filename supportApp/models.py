@@ -1,11 +1,27 @@
+# models.py
 from django.db import models
-from userApp.models import CustomUser
 
-class Support(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200, blank=True, null=True)
+class ContactSubmission(models.Model):
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
     message = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True, blank=True)
-    modified_at = models.DateTimeField(auto_now=True, blank=True)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+
+class FAQ(models.Model):
+    TOPIC_CHOICES = [
+        ('general', 'General'),
+        ('payment', 'Payment'),
+        ('kyc', 'KYC'),
+        ('account', 'Account'),
+        ('transactions', 'Transactions'),
+        ('Cards', 'cards'),
+        ('other', 'Other'),
+    ]
+
+    topic = models.CharField(max_length=50, choices=TOPIC_CHOICES)
+    heading = models.CharField(max_length=255)
+    subtext = models.TextField()
+
     def __str__(self):
-        return f"{self.user} {self.name}"
+        return self.heading

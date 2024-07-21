@@ -1,10 +1,13 @@
-from django.urls import include, path
-from rest_framework import routers
-from . import views
+# urls.py
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import ContactSubmissionView, SupportInfoView, FAQViewSet
 
-router = routers.DefaultRouter()
-router.register(r'data', views.SupportViewSet)
+router = DefaultRouter()
+router.register(r'faqs', FAQViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('contact/', ContactSubmissionView.as_view(), name='contact-submission'),
+    path('support-info/', SupportInfoView.as_view(), name='support-info'),
+    path('', include(router.urls)), 
 ]

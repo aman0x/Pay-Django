@@ -1,7 +1,15 @@
+# serializers.py
 from rest_framework import serializers
-from supportApp.models import Support
+from supportApp.models import ContactSubmission, FAQ
 
-class SupportSerializer(serializers.ModelSerializer):
+class ContactSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Support
-        fields= "__all__"
+        model = ContactSubmission
+        fields = ['name', 'email', 'message']
+
+
+
+class FAQSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FAQ
+        fields = ['id', 'topic', 'heading', 'subtext']
