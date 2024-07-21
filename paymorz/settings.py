@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "cardApp",
     "paymentApp",
     "invoiceApp",
+    "notificationApp"
 ]
 
 MIDDLEWARE = [

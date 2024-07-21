@@ -1,17 +1,30 @@
-from rest_framework import viewsets, permissions, status, views
-from .serializers import *
-from invoiceApp.models import Invoice
-from rest_framework.response import Response
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from notificationApp.models import Topic, Notification, UserNotification
+from .serializers import TopicSerializer, NotificationSerializer, UserNotificationSerializer
 
-class NotificationViewSet(views.APIView):
-    permission_classes = [permissions.AllowAny]
+class TopicViewSet(viewsets.ModelViewSet):
+    queryset = Topic.objects.all()
+    serializer_class = TopicSerializer
 
-    def get(self, request):
-        data = {
-            "date" : "2024-06-21T10:21:17.116232Z",
-            "message_title": "title",
-            "type" : "General",
-            "message": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur tempus urna at turpis condimentum lobortis.  Curabitur tempus urna at turpis condimentum lobortis. Curabitur tempus urna at turpis condimentum lobortis."
-        }
-        serializer = NotificationSerializer(data)
-        return Response(serializer.data)
+class NotificationViewSet(viewsets.ModelViewSet):
+    queryset = Notification.objects.all()
+    serializer_class = NotificationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Get common notifications
+        common_notifications = Notification.objects.filter(is_common=True)
+        # Get user-specific notifications
+        user_notifications = UserNotification.objects.filter(user=self.request.user).values_list('notification', flat=True)
+        user_notifications = Notification.objects.filter(id__in=user_notifications)
+        # Combine both
+        return common_notifications | user_notifications
+
+class UserNotificationViewSet(viewsets.ModelViewSet):
+    queryset = UserNotification.objects.all()
+    serializer_class = UserNotificationSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return UserNotification.objects.filter(user=self.request.user)

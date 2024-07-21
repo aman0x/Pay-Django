@@ -7,12 +7,14 @@ class BeneficiarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Beneficiary
         fields = ['id', 'user', 'name', 'phone_number', 'bank_account',  "verified", "verified_at"]
+        ref_name = 'UserAppBeneficiarySerializer' 
         read_only_fields = ['id', 'user', 'bank_account']
 
 class BankAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = BankAccount
         fields = ['id', 'user', 'account_name', 'account_number', 'ifsc_code', 'account_type', 'account_type_2', 'gstin', 'pan', 'bank_name']
+        ref_name = 'UserAppBankAccountSerializer' 
         read_only_fields = ['id', 'user']
 
 
@@ -22,6 +24,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['first_name', 'middle_name', 'last_name', 'nick_name', 'email', 'phone', 'pan_no', 'adhaar_no', 'account_type', 'company_name', 'company_pan_no', 'company_adhaar_no']
         read_only_fields = ['email']  
+    
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model=CustomUser
