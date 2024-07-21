@@ -1,21 +1,41 @@
-from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
+from django.db import models, IntegrityError
 from phonenumber_field.modelfields import PhoneNumberField
-from django.db import IntegrityError
+from django.conf import settings
 
 ACCOUNT_TYPE = (
     ("INDIVIDUAL", "Individual"),
     ("BUSINESS", "Business")
 )
 
-class CustomUser(models.Model):
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(email, password, **extra_fields)
+
+class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=200, blank=True, null=True)
     middle_name = models.CharField(max_length=200, blank=True, null=True)
     last_name = models.CharField(max_length=200, blank=True, null=True)
     nick_name = models.CharField(max_length=200, blank=True, null=True)
-    email = models.EmailField(unique=True,blank=True, null=True)
-    phone = PhoneNumberField(unique=True,blank=True, null=True)
-    password = models.CharField(max_length=200, blank=True, null=True)
+    email = models.EmailField(unique=True, blank=True, null=True)
+    phone = PhoneNumberField(unique=True, blank=True, null=True)
     pan_no = models.CharField(max_length=200, blank=True, null=True)
     adhaar_no = models.CharField(max_length=12, default=None, blank=True, null=True)
     account_type = models.CharField(max_length=20, choices=ACCOUNT_TYPE, default="INDIVIDUAL")
@@ -27,41 +47,21 @@ class CustomUser(models.Model):
     social_login_uid = models.CharField(max_length=200, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     modified_at = models.DateTimeField(auto_now=True, blank=True)
-    custom_user = models.OneToOneField(
-        User, related_name="custom_user", on_delete=models.CASCADE, null=True, blank=True)
+    auth_user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, related_name="custom_auth_user", on_delete=models.CASCADE, null=True, blank=True
+    )
+
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return str(self.email)
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            # If the CustomUser object is being created for the first time
-            try:
-                if self.email is not None and self.is_social_login is True:
-                    user = User.objects.create_user(
-                        username=self.email, password='Test@!Test123')
-                    self.custom_user = user
-                elif self.email is not None and self.is_social_login is False:
-                    user = User.objects.create_user(
-                        username=self.email, password=self.password)
-                    self.custom_user = user
-                else:
-                    user = User.objects.create_user(
-                        username=self.email, password='Test@!Test123')
-                    self.custom_user = user
-                    
-            except IntegrityError:
-                # If a user with the same username already exists, retrieve the existing user and update its fields
-                user = User.objects.get(username=self.email)
-                if self.is_social_login is True:
-                    user.set_password('Test@!Test123')
-                    user.save()
-                    self.custom_user = user
-                else:
-                    user.set_password(self.password)
-                    user.save()
-                    self.custom_user = user
         super().save(*args, **kwargs)
+
 
 
 class Kyc(models.Model):

@@ -1,13 +1,17 @@
 from rest_framework import viewsets, permissions, status
 from .serializers import CardSerializer
 from cardApp.models import Card
-from rest_framework_swagger.views import get_swagger_view
-schema_view = get_swagger_view(title='Pastebin API')
-
+from rest_framework.permissions import IsAuthenticated
 
 class CardViewSet(viewsets.ModelViewSet):
-    queryset = Card.objects.all()
     serializer_class = CardSerializer
-    authentication_classes = []
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        return Card.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)

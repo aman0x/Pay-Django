@@ -52,6 +52,18 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # If using JWT
+        'rest_framework.authentication.SessionAuthentication',  # If using session
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+AUTH_USER_MODEL = 'userApp.CustomUser'
+
+
 ROOT_URLCONF = "paymorz.urls"
 
 TEMPLATES = [
