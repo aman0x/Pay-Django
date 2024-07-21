@@ -10,6 +10,7 @@ User = get_user_model()
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
+        ref_name = 'InvoiceService'
         fields = ['id', 'name', 'description', 'price']
 
 class TransactionSerializer(serializers.ModelSerializer):
