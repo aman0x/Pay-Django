@@ -26,6 +26,7 @@ class BeneficiaryCreateView(generics.CreateAPIView):
 class BeneficiaryUpdateBankView(generics.GenericAPIView):
     serializer_class = BankAccountSerializer
     permission_classes = [permissions.IsAuthenticated]
+    queryset = Beneficiary.objects.none()  # Dummy queryset
 
     def get_beneficiary(self):
         user = self.request.user
