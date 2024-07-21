@@ -7,32 +7,45 @@ from firebase_admin import auth
 from .firebase_init import initialize_firebase
 from .serializers import RegisterSerializer, KycSerializer, EmailLoginSerializer, OTPLoginSerializer, UserProfileSerializer,BankAccountSerializer
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from userApp.permissions import IsOwnerOrAdder
 
 
 
 
 common_status = settings.COMMON_STATUS
 
-class BankAccountCreateView(generics.CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+# List all bank accounts for the authenticated user
+class BankAccountListView(generics.ListAPIView):
     serializer_class = BankAccountSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return BankAccount.objects.filter(user=user)
+
+# Create a new bank account
+class BankAccountCreateView(generics.CreateAPIView):
+    serializer_class = BankAccountSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-class BankAccountListView(generics.ListAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = BankAccountSerializer
-
-    def get_queryset(self):
-        return BankAccount.objects.filter(user=self.request.user)
-
+# List all bank accounts added by the authenticated user
 class AllAddedBankAccountsView(generics.ListAPIView):
-    permission_classes = [permissions.IsAuthenticated]
     serializer_class = BankAccountSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return BankAccount.objects.filter(user=self.request.user)
+        user = self.request.user
+        return BankAccount.objects.filter(added_by=user)
+
+# Retrieve a single bank account instance
+class BankAccountDetailView(generics.RetrieveAPIView):
+    queryset = BankAccount.objects.all()
+    serializer_class = BankAccountSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdder]
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
