@@ -1,10 +1,27 @@
 from rest_framework import serializers
-from invoiceApp.models import Invoice
+from invoiceApp.models import Invoice, Service
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+class ServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Service
+        fields = ['id', 'name', 'description', 'price']
 
 class InvoiceSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(source='user.username', read_only=True)
+    receiver = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), source='receiver.id')
+    receiver_username = serializers.CharField(source='receiver.username', read_only=True)
+    services = ServiceSerializer(many=True, read_only=True)
+
     class Meta:
-        model=Invoice
-        fields= "__all__"
+        model = Invoice
+        fields = ['id', 'user', 'receiver', 'receiver_username', 'amount', 'tax', 'services', 'created_at', 'status', 'invoice_number']
+
+
+
+
+
         
 class InvoiceSentDashboardSerializer(serializers.Serializer):
     all_invoices = serializers.IntegerField(read_only=True)

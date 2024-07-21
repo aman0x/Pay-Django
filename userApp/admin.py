@@ -3,27 +3,33 @@ from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser, Kyc, BankAccount, Beneficiary
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 
+
+
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = CustomUser
-    list_display = ('email', 'is_staff', 'is_active',)
-    list_filter = ('email', 'is_staff', 'is_active',)
+    list_display = ['email', 'first_name', 'last_name', 'is_staff']
+    list_filter = ['is_staff', 'is_superuser', 'is_active']
+    search_fields = ('email', 'first_name', 'last_name')
+    ordering = ('email',)
+    filter_horizontal = ()
+    
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'middle_name', 'last_name', 'nick_name', 'phone', 'pan_no', 'adhaar_no', 'account_type', 'company_name', 'company_pan_no', 'company_adhaar_no', 'otp', 'is_social_login', 'social_login_uid')}),
-        ('Permissions', {'fields': ('is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'phone', 'account_type')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'is_staff', 'is_active')}
+            'fields': ('email', 'first_name', 'last_name', 'phone', 'password1', 'password2', 'is_staff', 'is_active')}
         ),
     )
-    search_fields = ('email',)
-    ordering = ('email',)
 
 admin.site.register(CustomUser, CustomUserAdmin)
+
 
 class KycAdmin(admin.ModelAdmin):
     list_display = ('user', 'name', 'region', 'document_name', 'document_id', 'created_at', 'modified_at')

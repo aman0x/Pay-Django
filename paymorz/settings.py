@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "rest_framework_swagger",
     "rest_framework_simplejwt",
+    "django_filters",
     "drf_yasg",
     "phonenumber_field",
     "rest_framework",
@@ -76,6 +77,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
 }
 AUTH_USER_MODEL = 'userApp.CustomUser'
 

@@ -1,13 +1,50 @@
-from rest_framework import viewsets, permissions, status, views
+from rest_framework import viewsets, permissions, status, views, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import *
-from invoiceApp.models import Invoice
+from invoiceApp.models import Invoice, Service
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
+
+
+class ServiceViewSet(viewsets.ModelViewSet):
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+    permission_classes = [IsAuthenticated]
+
 
 class InvoiceViewSet(viewsets.ModelViewSet):
     queryset = Invoice.objects.all()
     serializer_class = InvoiceSerializer
-    authentication_classes = []
-    permission_classes = [permissions.AllowAny]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['user', 'receiver', 'status', 'created_at']
+    search_fields = ['user__username', 'receiver__username', 'invoice_number']
+    ordering_fields = ['created_at', 'amount', 'status']
+
+class RaisedInvoiceViewSet(viewsets.ModelViewSet):
+    serializer_class = InvoiceSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Invoice.objects.filter(user=self.request.user)
+
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['status', 'created_at']
+    search_fields = ['receiver__username', 'invoice_number']
+    ordering_fields = ['created_at', 'amount', 'status']
+
+class PayableInvoiceViewSet(viewsets.ModelViewSet):
+    serializer_class = InvoiceSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Invoice.objects.filter(receiver=self.request.user)
+
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['status', 'created_at']
+    search_fields = ['user__username', 'invoice_number']
+    ordering_fields = ['created_at', 'amount', 'status']
+
     
 class InvoiceSentDashboardViewSet(views.APIView):
     permission_classes = [permissions.AllowAny]

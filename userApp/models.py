@@ -32,6 +32,7 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 class CustomUser(AbstractUser):
+    username = None  # Remove the username field
     first_name = models.CharField(max_length=200, blank=True, null=True)
     middle_name = models.CharField(max_length=200, blank=True, null=True)
     last_name = models.CharField(max_length=200, blank=True, null=True)
