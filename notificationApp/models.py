@@ -9,8 +9,9 @@ class Topic(models.Model):
 class Notification(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
-    data = models.JSONField()
+    data = models.TextField()
     status = models.CharField(max_length=50)
+    is_new = models.BooleanField(default=True)
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
     is_common = models.BooleanField(default=False)  # To distinguish common notifications
