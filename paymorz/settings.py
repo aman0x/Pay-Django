@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_extensions",
     "rest_framework_swagger",
+    "rest_framework_simplejwt",
     "drf_yasg",
     "phonenumber_field",
     "rest_framework",
