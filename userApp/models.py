@@ -97,6 +97,7 @@ class BankAccount(models.Model):
     ifsc_code = models.CharField(max_length=11)
     account_type = models.CharField(max_length=20)
     account_type_2 = models.CharField(max_length=20, blank=True, null=True)
+    bank_name = models.CharField(max_length=20, blank=True, null=True)
     gstin = models.CharField(max_length=15, blank=True, null=True)
     pan = models.CharField(max_length=10, blank=True, null=True)
 
