@@ -41,10 +41,12 @@ INSTALLED_APPS = [
     "cardApp",
     "paymentApp",
     "invoiceApp",
+    "corsheaders",
     "notificationApp"
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
