@@ -23,6 +23,7 @@ class BeneficiaryCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+
 class BeneficiaryUpdateBankView(generics.GenericAPIView):
     serializer_class = BankAccountSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -71,6 +72,7 @@ class ListBeneficiariesView(generics.ListAPIView):
         user = self.request.user
         return Beneficiary.objects.filter(user=user)
 
+
 # List all bank accounts for the authenticated user
 class BankAccountListView(generics.ListAPIView):
     serializer_class = BankAccountSerializer
@@ -79,6 +81,7 @@ class BankAccountListView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return BankAccount.objects.filter(user=user)
+
 
 # Create a new bank account
 class BankAccountCreateView(generics.CreateAPIView):
