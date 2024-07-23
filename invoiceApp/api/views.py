@@ -10,16 +10,20 @@ from rest_framework.decorators import action
 class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
-    permission_classes = [IsAuthenticated]
-
+    permission_classes = [permissions.IsAuthenticated]
 
 class InvoiceViewSet(viewsets.ModelViewSet):
     queryset = Invoice.objects.all()
     serializer_class = InvoiceSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['user', 'receiver', 'status', 'created_at']
-    search_fields = ['user__username', 'receiver__username', 'invoice_number']
+    filterset_fields = ['user', 'beneficiary', 'status', 'created_at']
+    search_fields = ['user__username', 'beneficiary__name', 'invoice_number']
     ordering_fields = ['created_at', 'amount', 'status']
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
 
 class RaisedInvoiceViewSet(viewsets.ModelViewSet):
     serializer_class = InvoiceSerializer
@@ -30,7 +34,7 @@ class RaisedInvoiceViewSet(viewsets.ModelViewSet):
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'created_at']
-    search_fields = ['receiver__username', 'invoice_number']
+    search_fields = ['beneficiary__name', 'invoice_number']
     ordering_fields = ['created_at', 'amount', 'status']
 
 class PayableInvoiceViewSet(viewsets.ModelViewSet):
@@ -38,7 +42,7 @@ class PayableInvoiceViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Invoice.objects.filter(receiver=self.request.user)
+        return Invoice.objects.filter(beneficiary__user=self.request.user)
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'created_at']

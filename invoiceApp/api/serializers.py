@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from invoiceApp.models import Invoice, Service
 from django.contrib.auth import get_user_model
+from userApp.models import Beneficiary
+
 User = get_user_model()
 
 class ServiceSerializer(serializers.ModelSerializer):
@@ -10,16 +12,19 @@ class ServiceSerializer(serializers.ModelSerializer):
 
 class InvoiceSerializer(serializers.ModelSerializer):
     user = serializers.CharField(source='user.username', read_only=True)
-    receiver = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), source='receiver.id')
-    receiver_username = serializers.CharField(source='receiver.username', read_only=True)
+    beneficiary = serializers.PrimaryKeyRelatedField(queryset=Beneficiary.objects.all())
+    beneficiary_name = serializers.CharField(source='beneficiary.name', read_only=True)
     services = ServiceSerializer(many=True, read_only=True)
 
     class Meta:
         model = Invoice
-        fields = ['id', 'user', 'receiver', 'receiver_username', 'amount', 'tax', 'services', 'created_at', 'status', 'invoice_number']
+        fields = ['id', 'user', 'beneficiary', 'beneficiary_name', 'amount', 'tax', 'services', 'created_at', 'status', 'invoice_number']
 
-
-
+    def create(self, validated_data):
+        user = self.context['request'].user
+        beneficiary = validated_data.pop('beneficiary')
+        invoice = Invoice.objects.create(user=user, beneficiary=beneficiary, **validated_data)
+        return invoice
 
 
         

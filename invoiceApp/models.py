@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 import string
 import random
+from userApp.models import Beneficiary
 
 User = get_user_model()
 
@@ -24,7 +25,7 @@ class Service(models.Model):
 
 class Invoice(models.Model):
     user = models.ForeignKey(User, related_name='invoices', on_delete=models.CASCADE)
-    receiver = models.ForeignKey(User, related_name='received_invoices', on_delete=models.CASCADE)
+    beneficiary = models.ForeignKey(Beneficiary, related_name='received_invoices', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     tax = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     services = models.ManyToManyField(Service)
@@ -38,4 +39,4 @@ class Invoice(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Invoice {self.invoice_number} for {self.receiver.username}"
+        return f"Invoice {self.invoice_number} for {self.beneficiary.name}"
