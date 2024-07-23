@@ -1,32 +1,34 @@
 from rest_framework import serializers
-from transactionApp.models import Transaction
+from transactionApp.models import Transaction, Beneficiary
 from invoiceApp.models import Service
 from userApp.models import BankAccount
 from cardApp.models import Card
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
-        ref_name = 'InvoiceService'
+        ref_name = 'TransactionService'
         fields = ['id', 'name', 'description', 'price']
+
+class BeneficiarySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Beneficiary
+        fields = ['id', 'name', 'phone_number', 'bank_account', 'verified', 'verified_at']
 
 class TransactionSerializer(serializers.ModelSerializer):
     services = ServiceSerializer(many=True, read_only=True)
     service_ids = serializers.PrimaryKeyRelatedField(queryset=Service.objects.all(), many=True, write_only=True)
-    receivable_name = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    beneficiary = serializers.PrimaryKeyRelatedField(queryset=Beneficiary.objects.all())
     card_id = serializers.PrimaryKeyRelatedField(queryset=Card.objects.all(), write_only=True, required=False, allow_null=True)
     bank_account_id = serializers.PrimaryKeyRelatedField(queryset=BankAccount.objects.all(), write_only=True, required=False, allow_null=True)
     card = serializers.StringRelatedField(read_only=True)
     bank_account = serializers.StringRelatedField(read_only=True)
-    receivable_name_username = serializers.CharField(source='receivable_name.username', read_only=True)
+    beneficiary_name = serializers.CharField(source='beneficiary.name', read_only=True)
 
     class Meta:
         model = Transaction
         fields = [
-            'id', 'transaction_amount', 'receivable_name', 'receivable_name_username', 'services', 'service_ids', 
+            'id', 'transaction_amount', 'beneficiary', 'beneficiary_name', 'services', 'service_ids', 
             'transaction_type', 'card_id', 'bank_account_id', 'card', 'bank_account', 'created_at'
         ]
 
