@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
 
+
 class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
@@ -48,6 +49,7 @@ class PayableInvoiceViewSet(viewsets.ModelViewSet):
     filterset_fields = ['status', 'created_at']
     search_fields = ['user__username', 'invoice_number']
     ordering_fields = ['created_at', 'amount', 'status']
+
 
     
 class InvoiceSentDashboardViewSet(views.APIView):

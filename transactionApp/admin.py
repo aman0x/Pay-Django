@@ -15,7 +15,7 @@ class BeneficiaryFilter(admin.SimpleListFilter):
         return queryset
 
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'transaction_amount', 'beneficiary_name', 'transaction_type', 'card', 'bank_account', 'created_at']
+    list_display = ['id', 'transaction_number', 'transaction_amount', 'beneficiary_name', 'transaction_type', 'card', 'bank_account', 'transaction_status', 'created_at']
     list_filter = ['transaction_type', 'created_at', BeneficiaryFilter]
     search_fields = ['beneficiary__name', 'card__card_holder_name', 'bank_account__account_name']
 
@@ -30,3 +30,4 @@ class TransactionAdmin(admin.ModelAdmin):
     beneficiary_name.short_description = 'Beneficiary Name'
 
 admin.site.register(Transaction, TransactionAdmin)
+

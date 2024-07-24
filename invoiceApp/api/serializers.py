@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from invoiceApp.models import Invoice, Service
+from userApp.models import Beneficiary, BankAccount
 from django.contrib.auth import get_user_model
-from userApp.models import Beneficiary
 
 User = get_user_model()
 
@@ -10,21 +10,53 @@ class ServiceSerializer(serializers.ModelSerializer):
         model = Service
         fields = ['id', 'name', 'description', 'price']
 
+class BeneficiaryBankAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BankAccount
+        ref_name = 'InvoiceBeneficiaryBankAccount'
+        fields = ['account_name', 'account_number', 'ifsc_code', 'bank_name']
+
+class BeneficiarySerializer(serializers.ModelSerializer):
+    bank_account = BeneficiaryBankAccountSerializer(read_only=True)
+
+    class Meta:
+        model = Beneficiary
+        fields = ['id', 'name', 'phone_number', 'bank_account', 'verified', 'verified_at']
+
 class InvoiceSerializer(serializers.ModelSerializer):
     user = serializers.CharField(source='user.username', read_only=True)
+    user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
     beneficiary = serializers.PrimaryKeyRelatedField(queryset=Beneficiary.objects.all())
     beneficiary_name = serializers.CharField(source='beneficiary.name', read_only=True)
+    beneficiary_bank_account = BeneficiaryBankAccountSerializer(source='beneficiary.bank_account', read_only=True)
     services = ServiceSerializer(many=True, read_only=True)
+    service_ids = serializers.PrimaryKeyRelatedField(queryset=Service.objects.all(), many=True, write_only=True)
+    invoice_number = serializers.CharField(read_only=True)
 
     class Meta:
         model = Invoice
-        fields = ['id', 'user', 'beneficiary', 'beneficiary_name', 'amount', 'tax', 'services', 'created_at', 'status', 'invoice_number']
+        fields = ['id', 'user', 'user_id', 'beneficiary', 'beneficiary_name', 'beneficiary_bank_account', 'amount', 'tax', 'services', 'service_ids', 'created_at', 'status', 'invoice_number']
 
     def create(self, validated_data):
-        user = self.context['request'].user
+        user = validated_data.pop('user_id')
+        service_ids = validated_data.pop('service_ids')
         beneficiary = validated_data.pop('beneficiary')
+        
         invoice = Invoice.objects.create(user=user, beneficiary=beneficiary, **validated_data)
+        invoice.services.set(service_ids)
         return invoice
+
+    def update(self, instance, validated_data):
+        service_ids = validated_data.pop('service_ids', None)
+        
+        if service_ids is not None:
+            instance.services.set(service_ids)
+
+        return super().update(instance, validated_data)
+
+
+
+
 
 
         
