@@ -6,3 +6,4 @@ class CardSerializer(serializers.ModelSerializer):
         model = Card
         fields = "__all__"
         read_only_fields = ['user']
+
