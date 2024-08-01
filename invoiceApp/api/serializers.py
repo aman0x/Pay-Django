@@ -59,6 +59,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
 
 
 
+
         
 class InvoiceSentDashboardSerializer(serializers.Serializer):
     all_invoices = serializers.IntegerField(read_only=True)

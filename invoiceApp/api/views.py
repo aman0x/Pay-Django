@@ -7,7 +7,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 
 
-
+from rest_framework import viewsets, permissions, filters
+from django_filters.rest_framework import DjangoFilterBackend
+from .serializers import InvoiceSerializer, ServiceSerializer
+from invoiceApp.models import Invoice, Service
+from rest_framework.permissions import IsAuthenticated
 
 class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Service.objects.all()
@@ -18,7 +22,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     queryset = Invoice.objects.all()
     serializer_class = InvoiceSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['user__username', 'beneficiary__name', 'status', 'created_at']
+    filterset_fields = ['user', 'beneficiary', 'status', 'created_at']
     search_fields = ['user__username', 'beneficiary__name', 'invoice_number']
     ordering_fields = ['created_at', 'amount', 'status']
 
