@@ -6,14 +6,14 @@ from django.contrib.auth import authenticate
 class BeneficiarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Beneficiary
-        fields = ['id', 'user', 'name', 'phone_number', 'bank_account',  "verified", "verified_at"]
+        fields = ['id', 'user', 'name', 'phone_number', 'bank_account',  "verified", "verified_at", 'created_at']
         ref_name = 'UserAppBeneficiarySerializer' 
         read_only_fields = ['id', 'user', 'bank_account']
 
 class BankAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = BankAccount
-        fields = ['id', 'user', 'account_name', 'account_number', 'ifsc_code', 'account_type', 'account_type_2', 'gstin', 'pan', 'bank_name']
+        fields = ['id', 'user', 'account_name', 'account_number', 'ifsc_code', 'account_type', 'account_type_2', 'gstin', 'pan', 'bank_name', 'deleted']
         ref_name = 'UserAppBankAccountSerializer' 
         read_only_fields = ['id', 'user']
 

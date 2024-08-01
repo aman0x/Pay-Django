@@ -41,7 +41,7 @@ class KycAdmin(admin.ModelAdmin):
 admin.site.register(Kyc, KycAdmin)
 
 class BankAccountAdmin(admin.ModelAdmin):
-    list_display = ('user', 'account_name', 'account_number', 'ifsc_code', 'account_type', 'bank_name')
+    list_display = ('user', 'account_name', 'account_number', 'ifsc_code', 'account_type', 'bank_name', 'deleted')
     search_fields = ('user__email', 'account_name', 'account_number')
     list_filter = ('account_type', 'account_type_2')
     ordering = ('-account_name',)
@@ -49,7 +49,7 @@ class BankAccountAdmin(admin.ModelAdmin):
 admin.site.register(BankAccount, BankAccountAdmin)
 
 class BeneficiaryAdmin(admin.ModelAdmin):
-    list_display = ('user', 'name', 'phone_number', 'verified', 'verified_at')
+    list_display = ('user', 'name', 'phone_number', 'verified', 'verified_at', 'created_at', 'modified_at')
     search_fields = ('user__email', 'name', 'phone_number')
     list_filter = ('verified', 'verified_at')
     ordering = ('-verified_at',)

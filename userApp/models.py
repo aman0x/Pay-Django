@@ -103,9 +103,11 @@ class BankAccount(models.Model):
     bank_name = models.CharField(max_length=20, blank=True, null=True)
     gstin = models.CharField(max_length=15, blank=True, null=True)
     pan = models.CharField(max_length=10, blank=True, null=True)
+    deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.account_name} - {self.account_number}"
+
     
 class Beneficiary(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='beneficiaries', on_delete=models.CASCADE)
@@ -114,6 +116,8 @@ class Beneficiary(models.Model):
     bank_account = models.OneToOneField('BankAccount', on_delete=models.CASCADE, null=True, blank=True)
     verified = models.BooleanField(default=False)
     verified_at = models.DateTimeField(default=timezone.now, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True)
+    modified_at = models.DateTimeField(auto_now=True, blank=True)
 
 
     def __str__(self):

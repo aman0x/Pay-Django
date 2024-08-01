@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from userApp.permissions import IsOwnerOrAdder
 from rest_framework.exceptions import NotFound
+from rest_framework import filters
 
 
 
@@ -65,23 +66,25 @@ class BeneficiaryUpdateBankView(generics.GenericAPIView):
         return Response(serializer.data)
 
 class ListBeneficiariesView(generics.ListAPIView):
+    queryset = Beneficiary.objects.all()
     serializer_class = BeneficiarySerializer
     permission_classes = [permissions.IsAuthenticated]
+    search_fields = ['bank__name']
 
     def get_queryset(self):
         user = self.request.user
         return Beneficiary.objects.filter(user=user)
 
 
-# List all bank accounts for the authenticated user
 class BankAccountListView(generics.ListAPIView):
     serializer_class = BankAccountSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['account_name', 'account_number', 'bank_name']
 
     def get_queryset(self):
         user = self.request.user
-        return BankAccount.objects.filter(user=user)
-
+        return BankAccount.objects.filter(user=user, deleted=False)
 
 # Create a new bank account
 class BankAccountCreateView(generics.CreateAPIView):
@@ -91,20 +94,30 @@ class BankAccountCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-# List all bank accounts added by the authenticated user
-class AllAddedBankAccountsView(generics.ListAPIView):
+# Mark a bank account as deleted instead of removing it
+class BankAccountDeleteView(generics.UpdateAPIView):
     serializer_class = BankAccountSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdder]
+    queryset = BankAccount.objects.all()
 
-    def get_queryset(self):
-        user = self.request.user
-        return BankAccount.objects.filter(added_by=user)
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        instance.deleted = True
+        instance.save()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
 # Retrieve a single bank account instance
 class BankAccountDetailView(generics.RetrieveAPIView):
-    queryset = BankAccount.objects.all()
+    queryset = BankAccount.objects.filter(deleted=False)
     serializer_class = BankAccountSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdder]
+
+
+
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
