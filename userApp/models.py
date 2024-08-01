@@ -115,6 +115,7 @@ class Beneficiary(models.Model):
     phone_number = models.CharField(max_length=15)
     bank_account = models.OneToOneField('BankAccount', on_delete=models.CASCADE, null=True, blank=True)
     verified = models.BooleanField(default=False)
+    deleted = models.BooleanField(default=False) 
     verified_at = models.DateTimeField(default=timezone.now, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     modified_at = models.DateTimeField(auto_now=True, blank=True)

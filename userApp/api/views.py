@@ -11,6 +11,8 @@ from rest_framework.permissions import IsAuthenticated
 from userApp.permissions import IsOwnerOrAdder
 from rest_framework.exceptions import NotFound
 from rest_framework import filters
+from rest_framework.pagination import PageNumberPagination
+
 
 
 
@@ -66,14 +68,29 @@ class BeneficiaryUpdateBankView(generics.GenericAPIView):
         return Response(serializer.data)
 
 class ListBeneficiariesView(generics.ListAPIView):
-    queryset = Beneficiary.objects.all()
     serializer_class = BeneficiarySerializer
     permission_classes = [permissions.IsAuthenticated]
-    search_fields = ['bank__name']
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name', 'phone_number']
+    pagination_class = PageNumberPagination
 
     def get_queryset(self):
         user = self.request.user
-        return Beneficiary.objects.filter(user=user)
+        return Beneficiary.objects.filter(user=user, deleted=False)
+
+class BeneficiaryDeleteView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk, *args, **kwargs):
+        user = request.user
+        try:
+            beneficiary = Beneficiary.objects.get(user=user, id=pk)
+        except Beneficiary.DoesNotExist:
+            raise NotFound('Beneficiary not found')
+        
+        beneficiary.deleted = True
+        beneficiary.save()
+        return Response({"detail": "Beneficiary marked as deleted"}, status=status.HTTP_204_NO_CONTENT)
 
 
 class BankAccountListView(generics.ListAPIView):

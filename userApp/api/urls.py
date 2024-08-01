@@ -1,6 +1,6 @@
 
 from django.urls import path
-from .views import EmailLoginView, OTPLoginView, LogoutView, UserProfileView, BankAccountCreateView, BankAccountListView,  BankAccountDetailView, BeneficiaryCreateView, ListBeneficiariesView,BeneficiaryUpdateBankView, BankAccountDeleteView
+from .views import EmailLoginView, OTPLoginView, LogoutView, UserProfileView, BankAccountCreateView, BankAccountListView,  BankAccountDetailView, BeneficiaryCreateView, ListBeneficiariesView,BeneficiaryUpdateBankView, BankAccountDeleteView, BeneficiaryDeleteView
 
 urlpatterns = [
     path('login/email/', EmailLoginView.as_view(), name='email_login'),
@@ -13,7 +13,8 @@ urlpatterns = [
     path('bank-accounts/<int:pk>/', BankAccountDetailView.as_view(), name='bank-account-detail'),
     path('bank-accounts/<int:pk>/delete/', BankAccountDeleteView.as_view(), name='bank-account-delete'),
     
-    path('beneficiaries/', BeneficiaryCreateView.as_view(), name='create_beneficiary'),
-    path('beneficiaries/<int:pk>/update-bank/', BeneficiaryUpdateBankView.as_view(), name='update_beneficiary_bank'),
-    path('beneficiaries/list/', ListBeneficiariesView.as_view(), name='list_beneficiaries'),
+    path('beneficiaries/', ListBeneficiariesView.as_view(), name='beneficiary-list'),
+    path('beneficiaries/create/', BeneficiaryCreateView.as_view(), name='beneficiary-create'),
+    path('beneficiaries/<int:pk>/update-bank/', BeneficiaryUpdateBankView.as_view(), name='beneficiary-update-bank'),
+    path('beneficiaries/<int:pk>/delete/', BeneficiaryDeleteView.as_view(), name='beneficiary-delete'),
 ]
