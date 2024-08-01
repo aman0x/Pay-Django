@@ -8,6 +8,7 @@ from rest_framework.decorators import action
 
 
 
+
 class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
