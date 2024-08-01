@@ -14,7 +14,7 @@ class BeneficiaryBankAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = BankAccount
         ref_name = 'InvoiceBeneficiaryBankAccount'
-        fields = ['account_name', 'account_number', 'ifsc_code', 'bank_name']
+        fields = ['account_name', 'account_number', 'ifsc_code', 'bank_name', 'account_type']
 
 class BeneficiarySerializer(serializers.ModelSerializer):
     bank_account = BeneficiaryBankAccountSerializer(read_only=True)
