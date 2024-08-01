@@ -7,9 +7,12 @@ class ContactSubmissionSerializer(serializers.ModelSerializer):
         model = ContactSubmission
         fields = ['name', 'email', 'message']
 
-
-
 class FAQSerializer(serializers.ModelSerializer):
+    topic_display = serializers.SerializerMethodField()
+
     class Meta:
         model = FAQ
-        fields = ['id', 'topic', 'heading', 'subtext']
+        fields = ['id', 'topic', 'heading', 'subtext', 'topic_display']
+
+    def get_topic_display(self, obj):
+        return obj.get_topic_display()
