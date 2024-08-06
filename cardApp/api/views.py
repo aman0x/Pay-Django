@@ -9,6 +9,8 @@ from cardApp.models import Card
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from rest_framework.decorators import action
+
 
 
 class CardViewSet(viewsets.ModelViewSet):
