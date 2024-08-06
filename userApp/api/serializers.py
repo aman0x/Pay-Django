@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from userApp.models import CustomUser, Kyc, CustomUser, BankAccount, Beneficiary
 from django.contrib.auth import authenticate
+from firebase_admin import auth
 
 
 class BeneficiarySerializer(serializers.ModelSerializer):
@@ -47,6 +48,21 @@ class EmailLoginSerializer(serializers.Serializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError("Invalid credentials")
+
+
+class FirebaseIDTokenSerializer(serializers.Serializer):
+    id_token = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        id_token = data.get('id_token')
+        try:
+            decoded_token = auth.verify_id_token(id_token)
+            uid = decoded_token['uid']
+            return uid
+        except Exception as e:
+            raise serializers.ValidationError("Invalid ID token")
+
+
 
 
 class OTPLoginSerializer(serializers.Serializer):

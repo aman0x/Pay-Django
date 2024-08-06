@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "rest_framework_swagger",
     "rest_framework_simplejwt",
+    'rest_framework_simplejwt.token_blacklist',
     "transactionApp",
     "django_filters",
     "drf_yasg",
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
     "invoiceApp",
     "corsheaders",
     "notificationApp"
+
 ]
 
 MIDDLEWARE = [
@@ -162,3 +164,4 @@ GRAPH_MODELS ={
     'all_applications': True,
     'graph_models': True,
 }
+

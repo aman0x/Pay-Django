@@ -4,8 +4,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework.response import Response
 from django.conf import settings
 from firebase_admin import auth
-from .firebase_init import initialize_firebase
-from .serializers import RegisterSerializer, KycSerializer, EmailLoginSerializer, OTPLoginSerializer, UserProfileSerializer,BankAccountSerializer, BeneficiarySerializer
+from .serializers import RegisterSerializer, KycSerializer, EmailLoginSerializer, OTPLoginSerializer, UserProfileSerializer,BankAccountSerializer, BeneficiarySerializer, FirebaseIDTokenSerializer
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from userApp.permissions import IsOwnerOrAdder
@@ -13,6 +12,8 @@ from rest_framework.exceptions import NotFound
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
 
+
+from firebase_admin import auth
 
 
 
@@ -173,6 +174,39 @@ class EmailLoginView(APIView):
                 'user_id': user.id
             })
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FirebaseGoogleLoginView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = FirebaseIDTokenSerializer(data=request.data)
+        if serializer.is_valid():
+            uid = serializer.validated_data
+            try:
+                user = User.objects.get(social_login_uid=uid)
+            except User.DoesNotExist:
+                firebase_user = auth.get_user(uid)
+                user = User.objects.create(
+                    email=firebase_user.email,
+                    first_name=firebase_user.display_name,
+                    social_login_uid=uid,
+                    is_social_login=True
+                )
+                user.set_unusable_password()
+                user.save()
+                
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+                'user_id': user.id
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 
 
 class OTPLoginView(APIView):
