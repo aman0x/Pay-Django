@@ -23,6 +23,8 @@ class Service(models.Model):
     def __str__(self):
         return self.name
 
+from django.conf import settings
+
 class Invoice(models.Model):
     user = models.ForeignKey(User, related_name='invoices', on_delete=models.CASCADE)
     beneficiary = models.ForeignKey(Beneficiary, related_name='received_invoices', on_delete=models.CASCADE)
@@ -32,6 +34,7 @@ class Invoice(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=settings.INVOICE_STATUSES, default='draft')
     invoice_number = models.CharField(max_length=15, unique=True, blank=False, default='')
+    invoice_type = models.CharField(max_length=20, choices=settings.INVOICE_TYPES, default='regular')  
 
     def save(self, *args, **kwargs):
         if not self.invoice_number:
@@ -40,3 +43,4 @@ class Invoice(models.Model):
 
     def __str__(self):
         return f"Invoice {self.invoice_number} for {self.beneficiary.name}"
+

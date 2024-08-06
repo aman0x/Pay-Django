@@ -8,7 +8,7 @@ class ServiceAdmin(admin.ModelAdmin):
 
 @admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'beneficiary_name', 'amount', 'tax', 'status', 'invoice_number', 'created_at')
+    list_display = ('id', 'user', 'beneficiary_name', 'amount', 'tax', 'status', 'invoice_number', 'created_at', 'invoice_type')
     search_fields = ('user__username', 'beneficiary__name', 'invoice_number')
     list_filter = ('status', 'created_at')
     filter_horizontal = ('services',)
