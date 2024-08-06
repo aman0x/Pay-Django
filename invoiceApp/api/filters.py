@@ -2,15 +2,14 @@ from django_filters import rest_framework as filters
 from invoiceApp.models import Invoice
 
 class InvoiceFilter(filters.FilterSet):
-    user_username = filters.CharFilter(method='filter_by_user_username')
-    beneficiary_name = filters.CharFilter(method='filter_by_beneficiary_name')
-
+    user__username = filters.CharFilter(field_name='user__username', lookup_expr='icontains')
+    beneficiary__name = filters.CharFilter(field_name='beneficiary__name', lookup_expr='icontains')
+    
     class Meta:
         model = Invoice
-        fields = ['user_username', 'beneficiary_name', 'status', 'created_at']
-
-    def filter_by_user_username(self, queryset, name, value):
-        return queryset.filter(user__username__icontains=value)
-
-    def filter_by_beneficiary_name(self, queryset, name, value):
-        return queryset.filter(beneficiary__name__icontains=value)
+        fields = {
+            'status': ['exact'],
+            'created_at': ['exact', 'gte', 'lte'],
+            'amount': ['exact', 'gte', 'lte'],
+            'invoice_number': ['icontains'],
+        }

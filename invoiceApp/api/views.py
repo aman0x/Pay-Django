@@ -3,8 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import *
 from invoiceApp.models import Invoice, Service
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action
+from .filters import InvoiceFilter
 
 
 from rest_framework import viewsets, permissions, filters
@@ -23,8 +22,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     serializer_class = InvoiceSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['user', 'beneficiary', 'status', 'created_at']
-    search_fields = ['user__username', 'beneficiary__name', 'invoice_number']
+    filterset_class = InvoiceFilter
+    search_fields = ['invoice_number']
     ordering_fields = ['created_at', 'amount', 'status']
 
     def get_serializer_context(self):
@@ -37,6 +36,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
+
 
 
 class RaisedInvoiceViewSet(viewsets.ModelViewSet):
