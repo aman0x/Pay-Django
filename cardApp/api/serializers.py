@@ -5,7 +5,8 @@ class CardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
         fields = "__all__"
-        read_only_fields = ['user']
+        read_only_fields = ['user', 'deleted']
+
         
         
 class BinCheckSerializer(serializers.Serializer):

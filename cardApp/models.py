@@ -25,12 +25,14 @@ class Card(models.Model):
     verified_at = models.DateTimeField(default=timezone.now, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     modified_at = models.DateTimeField(auto_now=True, blank=True)
-    
+    deleted = models.BooleanField(default=False)  # Add this line
+
     def __str__(self):
         return f"{self.user} {self.card_no}"
-    
+
     def clean(self):
         super().clean()
         if self.expiry_date:
             if not re.match(r'^(0[1-9]|1[0-2])\/\d{2}$', self.expiry_date):
                 raise ValidationError("Expiry date must be in MM/YY format.")
+

@@ -20,13 +20,23 @@ class CardViewSet(viewsets.ModelViewSet):
     ordering_fields = ['created_at', 'modified_at']
 
     def get_queryset(self):
-        return Card.objects.filter(user=self.request.user)
+        return Card.objects.filter(user=self.request.user, deleted=False)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def delete_card(self, request, pk=None):
+        try:
+            card = self.get_queryset().get(pk=pk)
+            card.deleted = True
+            card.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Card.DoesNotExist:
+            return Response({'error': 'Card not found'}, status=status.HTTP_404_NOT_FOUND)
 
 class BinCheckView(APIView):
     def get(self, request, bin_code, format=None):
