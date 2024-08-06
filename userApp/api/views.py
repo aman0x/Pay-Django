@@ -4,9 +4,10 @@ from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework.response import Response
 from django.conf import settings
 from firebase_admin import auth
-from .serializers import RegisterSerializer, KycSerializer, EmailLoginSerializer, OTPLoginSerializer, UserProfileSerializer,BankAccountSerializer, BeneficiarySerializer, FirebaseIDTokenSerializer
+from .serializers import RegisterSerializer, KycSerializer, EmailLoginSerializer, OTPRequestSerializer, UserProfileSerializer,BankAccountSerializer, BeneficiarySerializer, FirebaseIDTokenSerializer, OTPVerifySerializer
+
+from utils.utils import send_otp, verify_otp
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 from userApp.permissions import IsOwnerOrAdder
 from rest_framework.exceptions import NotFound
 from rest_framework import filters
@@ -184,10 +185,10 @@ class FirebaseGoogleLoginView(APIView):
         if serializer.is_valid():
             uid = serializer.validated_data
             try:
-                user = User.objects.get(social_login_uid=uid)
-            except User.DoesNotExist:
+                user = CustomUser.objects.get(social_login_uid=uid)
+            except CustomUser.DoesNotExist:
                 firebase_user = auth.get_user(uid)
-                user = User.objects.create(
+                user = CustomUser.objects.create(
                     email=firebase_user.email,
                     first_name=firebase_user.display_name,
                     social_login_uid=uid,
@@ -207,21 +208,47 @@ class FirebaseGoogleLoginView(APIView):
 
 
 
-
-
-class OTPLoginView(APIView):
+class OTPRequestView(APIView):
     permission_classes = [permissions.AllowAny]
-
     def post(self, request):
-        serializer = OTPLoginSerializer(data=request.data)
+        serializer = OTPRequestSerializer(data=request.data)
         if serializer.is_valid():
-            user = serializer.validated_data
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-            })
+            phone = serializer.validated_data.get('phone')
+            if not CustomUser.objects.filter(phone=phone).exists():
+                return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+            response = send_otp(phone)
+            if response and response.get('Status') == 'Success':
+                return Response({'session_id': response.get('Details')}, status=status.HTTP_200_OK)
+            return Response({'error': 'Failed to send OTP'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class OTPVerifyView(APIView):
+    permission_classes = [permissions.AllowAny]
+    def post(self, request):
+        serializer = OTPVerifySerializer(data=request.data)
+        if serializer.is_valid():
+            phone = serializer.validated_data.get('phone')
+            #otp = serializer.validated_data.get('otp')
+            otp = serializer.validated_data.get('1111')
+            session_id = serializer.validated_data.get('session_id')
+            response = verify_otp(session_id, otp)
+            if response and response.get('Status') == 'Success':
+                try:
+                    user = CustomUser.objects.get(phone=phone)
+                    refresh = RefreshToken.for_user(user)
+                    return Response({
+                        'refresh': str(refresh),
+                        'access': str(refresh.access_token),
+                        'user_id': user.id
+                    }, status=status.HTTP_200_OK)
+                except CustomUser.DoesNotExist:
+                    return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]

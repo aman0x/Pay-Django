@@ -63,17 +63,11 @@ class FirebaseIDTokenSerializer(serializers.Serializer):
             raise serializers.ValidationError("Invalid ID token")
 
 
-
-
-class OTPLoginSerializer(serializers.Serializer):
+class OTPRequestSerializer(serializers.Serializer):
     phone = serializers.CharField()
-    otp = serializers.CharField(write_only=True)
 
-    def validate(self, data):
-        phone = data.get('phone')
-        otp = data.get('otp')
-        try:
-            user = CustomUser.objects.get(phone=phone, otp=otp)
-        except CustomUser.DoesNotExist:
-            raise serializers.ValidationError("Invalid OTP or phone number")
-        return user
+class OTPVerifySerializer(serializers.Serializer):
+    phone = serializers.CharField()
+    otp = serializers.CharField()
+    session_id = serializers.CharField()
+

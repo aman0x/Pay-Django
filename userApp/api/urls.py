@@ -1,13 +1,16 @@
 
 from django.urls import path,include
-from .views import EmailLoginView, OTPLoginView, LogoutView, UserProfileView, BankAccountCreateView, BankAccountListView,  BankAccountDetailView, BeneficiaryCreateView, ListBeneficiariesView,BeneficiaryUpdateBankView, BankAccountDeleteView, BeneficiaryDeleteView, FirebaseGoogleLoginView
+from .views import EmailLoginView,  LogoutView, UserProfileView, BankAccountCreateView, BankAccountListView,  BankAccountDetailView, BeneficiaryCreateView, ListBeneficiariesView,BeneficiaryUpdateBankView, BankAccountDeleteView, BeneficiaryDeleteView, FirebaseGoogleLoginView, OTPRequestView,OTPVerifyView
+
+
 urlpatterns = [
     path('login/email/', EmailLoginView.as_view(), name='email_login'),
     path('api/google-login/', FirebaseGoogleLoginView.as_view(), name='google-login'),
+    path('otp/request/', OTPRequestView.as_view(), name='otp_request'),
+    path('otp/verify/', OTPVerifyView.as_view(), name='otp_verify'),
     
     
-    
-    path('login/otp/', OTPLoginView.as_view(), name='otp_login'),
+    #retry #reset password #register
     path('logout/', LogoutView.as_view(), name='logout'),
     path('profile/', UserProfileView.as_view(), name='user_profile'),
     
