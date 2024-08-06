@@ -230,8 +230,7 @@ class OTPVerifyView(APIView):
         serializer = OTPVerifySerializer(data=request.data)
         if serializer.is_valid():
             phone = serializer.validated_data.get('phone')
-            #otp = serializer.validated_data.get('otp')
-            otp = serializer.validated_data.get('1111')
+            otp = serializer.validated_data.get('otp')
             session_id = serializer.validated_data.get('session_id')
             response = verify_otp(session_id, otp)
             if response and response.get('Status') == 'Success':

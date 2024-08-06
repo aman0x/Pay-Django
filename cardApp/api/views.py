@@ -1,9 +1,15 @@
-from rest_framework import viewsets, permissions
-from .serializers import CardSerializer
+import requests
+from django.conf import settings
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import viewsets
+from .serializers import CardSerializer, BinCheckSerializer
 from cardApp.models import Card
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+
 
 class CardViewSet(viewsets.ModelViewSet):
     serializer_class = CardSerializer
@@ -21,3 +27,18 @@ class CardViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
+
+class BinCheckView(APIView):
+    def get(self, request, bin_code, format=None):
+        serializer = BinCheckSerializer(data={'bin_code': bin_code})
+        if serializer.is_valid():
+            bin_code = serializer.validated_data['bin_code']
+            url = f"https://api.apilayer.com/bincheck/{bin_code}"
+            headers = {
+                "apikey": settings.APILAYER_API_KEY
+            }
+            response = requests.get(url, headers=headers)
+            if response.status_code == 200:
+                return Response(response.json(), status=status.HTTP_200_OK)
+            return Response(response.json(), status=response.status_code)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
