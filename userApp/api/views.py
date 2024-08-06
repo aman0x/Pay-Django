@@ -170,8 +170,10 @@ class EmailLoginView(APIView):
             return Response({
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
+                'user_id': user.id
             })
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class OTPLoginView(APIView):
     permission_classes = [permissions.AllowAny]

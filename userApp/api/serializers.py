@@ -48,6 +48,7 @@ class EmailLoginSerializer(serializers.Serializer):
             return user
         raise serializers.ValidationError("Invalid credentials")
 
+
 class OTPLoginSerializer(serializers.Serializer):
     phone = serializers.CharField()
     otp = serializers.CharField(write_only=True)
