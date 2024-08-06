@@ -21,6 +21,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
 class InvoiceViewSet(viewsets.ModelViewSet):
     queryset = Invoice.objects.all()
     serializer_class = InvoiceSerializer
+    permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['user', 'beneficiary', 'status', 'created_at']
     search_fields = ['user__username', 'beneficiary__name', 'invoice_number']
@@ -30,6 +31,13 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         context = super().get_serializer_context()
         context['request'] = self.request
         return context
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class RaisedInvoiceViewSet(viewsets.ModelViewSet):
     serializer_class = InvoiceSerializer

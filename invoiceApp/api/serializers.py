@@ -25,7 +25,6 @@ class BeneficiarySerializer(serializers.ModelSerializer):
 
 class InvoiceSerializer(serializers.ModelSerializer):
     user = serializers.CharField(source='user.username', read_only=True)
-    user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
     beneficiary = serializers.PrimaryKeyRelatedField(queryset=Beneficiary.objects.all())
     beneficiary_name = serializers.CharField(source='beneficiary.name', read_only=True)
     beneficiary_bank_account = BeneficiaryBankAccountSerializer(source='beneficiary.bank_account', read_only=True)
@@ -35,12 +34,12 @@ class InvoiceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Invoice
-        fields = ['id', 'user', 'user_id', 'beneficiary', 'beneficiary_name', 'beneficiary_bank_account', 'amount', 'tax', 'services', 'service_ids', 'created_at', 'status', 'invoice_number']
+        fields = ['id', 'user', 'beneficiary', 'beneficiary_name', 'beneficiary_bank_account', 'amount', 'tax', 'services', 'service_ids', 'created_at', 'status', 'invoice_number']
 
     def create(self, validated_data):
-        user = validated_data.pop('user_id')
         service_ids = validated_data.pop('service_ids')
         beneficiary = validated_data.pop('beneficiary')
+        user = self.context['request'].user
         
         invoice = Invoice.objects.create(user=user, beneficiary=beneficiary, **validated_data)
         invoice.services.set(service_ids)
@@ -53,6 +52,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
             instance.services.set(service_ids)
 
         return super().update(instance, validated_data)
+
 
 
 
