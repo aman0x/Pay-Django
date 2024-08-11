@@ -1,17 +1,13 @@
 import requests
 from django.conf import settings
-from rest_framework import status
+from rest_framework import status, viewsets, filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
+from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import CardSerializer, BinCheckSerializer
 from cardApp.models import Card
-from rest_framework.permissions import IsAuthenticated
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
-from rest_framework.decorators import action
-
-
 
 class CardViewSet(viewsets.ModelViewSet):
     serializer_class = CardSerializer
@@ -22,7 +18,9 @@ class CardViewSet(viewsets.ModelViewSet):
     ordering_fields = ['created_at', 'modified_at']
 
     def get_queryset(self):
-        return Card.objects.filter(user=self.request.user, deleted=False)
+        if self.request.user.is_authenticated:
+            return Card.objects.filter(user=self.request.user, deleted=False)
+        return Card.objects.none()
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
