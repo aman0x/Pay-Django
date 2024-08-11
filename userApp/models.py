@@ -5,10 +5,7 @@ from django.conf import settings
 from django.utils import timezone
 
 
-ACCOUNT_TYPE = (
-    ("INDIVIDUAL", "Individual"),
-    ("BUSINESS", "Business")
-)
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -38,21 +35,14 @@ class CustomUser(AbstractUser):
     last_name = models.CharField(max_length=200, blank=True, null=True)
     nick_name = models.CharField(max_length=200, blank=True, null=True)
     email = models.EmailField(unique=True, blank=True, null=True)
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     phone = PhoneNumberField(unique=True, blank=True, null=True)
-    pan_no = models.CharField(max_length=200, blank=True, null=True)
-    adhaar_no = models.CharField(max_length=12, default=None, blank=True, null=True)
-    account_type = models.CharField(max_length=20, choices=ACCOUNT_TYPE, default="INDIVIDUAL")
-    company_name = models.CharField(max_length=200, blank=True, null=True)
-    company_pan_no = models.CharField(max_length=200, blank=True, null=True)
-    company_adhaar_no = models.CharField(max_length=12, default=None, blank=True, null=True)
+    account_type = models.CharField(max_length=20, choices=settings.ACCOUNT_TYPE, default="INDIVIDUAL")
     otp = models.IntegerField(blank=True, null=True)
     is_social_login = models.BooleanField(default=False)
     social_login_uid = models.CharField(max_length=200, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     modified_at = models.DateTimeField(auto_now=True, blank=True)
-    auth_user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, related_name="custom_auth_user", on_delete=models.CASCADE, null=True, blank=True
-    )
 
     objects = CustomUserManager()
 
@@ -64,6 +54,29 @@ class CustomUser(AbstractUser):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+
+class IndividualUser(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    pan_no = models.CharField(max_length=200, blank=True, null=True)
+    pan_no_doc = models.ImageField(upload_to="documents/pan/", blank=True, null=True)
+    adhaar_no = models.CharField(max_length=12, blank=True, null=True)
+    adhaar_front_doc = models.ImageField(upload_to="documents/adhaar/front/", blank=True, null=True)
+    adhaar_back_doc = models.ImageField(upload_to="documents/adhaar/back/", blank=True, null=True)
+
+    def __str__(self):
+        return self.user.email
+
+class BusinessUser(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
+    company_name = models.CharField(max_length=200, blank=True, null=True)
+    company_pan_no = models.CharField(max_length=200, blank=True, null=True)
+    company_pan_no_doc = models.ImageField(upload_to="documents/company/pan/", blank=True, null=True)
+    company_adhaar_no = models.CharField(max_length=12, blank=True, null=True)
+    company_gst_no = models.CharField(max_length=15, blank=True, null=True)
+    company_gst_no_doc = models.ImageField(upload_to="documents/company/gst/", blank=True, null=True)
+
+    def __str__(self):
+        return self.user.email
 
 
 
@@ -82,15 +95,7 @@ class Kyc(models.Model):
         return self.name
 
 
-ACCOUNT_TYPE_CHOICES = (
-    ("SAVINGS", "Savings"),
-    ("CURRENT", "Current")
-)
 
-ACCOUNT_TYPE_2_CHOICES = (
-    ("PERSONAL", "Personal"),
-    ("BUSINESS", "Business")
-)
 
 class BankAccount(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='bank_accounts', on_delete=models.CASCADE)

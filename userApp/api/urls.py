@@ -1,6 +1,8 @@
 
-from django.urls import path,include
-from .views import EmailLoginView,  LogoutView, UserProfileView, BankAccountCreateView, BankAccountListView,  BankAccountDetailView, BeneficiaryCreateView, ListBeneficiariesView,BeneficiaryUpdateBankView, BankAccountDeleteView, BeneficiaryDeleteView, FirebaseGoogleLoginView, OTPRequestView,OTPVerifyView
+from django.urls import path, re_path
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from .views import *
 
 
 urlpatterns = [
@@ -11,6 +13,13 @@ urlpatterns = [
     
     
     #retry #reset password #register
+    
+    #register
+    path('register/step-one/', UserRegistrationStepOneView.as_view(), name='register-step-one'),
+    path('verify-otp-register/', OTPVerificationView.as_view(), name='verify-otp'),
+    path('complete-registration/', CompleteRegistrationView.as_view(), name='complete-registration'),
+    path('profile/', UserProfileView.as_view(), name='user-profile'),
+    
     path('logout/', LogoutView.as_view(), name='logout'),
     path('profile/', UserProfileView.as_view(), name='user_profile'),
     

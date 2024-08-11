@@ -13,11 +13,9 @@ from datetime import timedelta
 from pathlib import Path
 from .local_settings import *
 import sentry_sdk
-import warnings
 from django.core.exceptions import FieldError
 
-warnings.filterwarnings("ignore", category=UserWarning, module='django_filters.rest_framework.backends')
-warnings.filterwarnings("ignore", category=UserWarning, module='drf_yasg.inspectors.base')
+
 
 sentry_sdk.init(
     dsn="https://e75ff3617f9ceab912f78930bc0da962@o4507640108548096.ingest.us.sentry.io/4507640111366144",

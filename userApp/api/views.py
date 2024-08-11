@@ -4,22 +4,81 @@ from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework.response import Response
 from django.conf import settings
 from firebase_admin import auth
-from .serializers import RegisterSerializer, KycSerializer, EmailLoginSerializer, OTPRequestSerializer, UserProfileSerializer,BankAccountSerializer, BeneficiarySerializer, FirebaseIDTokenSerializer, OTPVerifySerializer
-
+from .serializers import *
 from utils.utils import send_otp, verify_otp
 from rest_framework.views import APIView
 from userApp.permissions import IsOwnerOrAdder
 from rest_framework.exceptions import NotFound
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
-
-
+from drf_yasg.utils import swagger_auto_schema
 from firebase_admin import auth
 
 
 
 
 common_status = settings.COMMON_STATUS
+
+class UserRegistrationStepOneView(APIView):
+    permission_classes = [permissions.AllowAny]
+    @swagger_auto_schema(request_body=UserRegistrationStepOneSerializer)
+    def post(self, request, *args, **kwargs):
+        serializer = UserRegistrationStepOneSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response({"message": "User registered successfully. Proceed to the next step.", "user_id": user.id}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class OTPVerificationView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    @swagger_auto_schema(request_body=OTPVerificationSerializer)
+    def post(self, request, *args, **kwargs):
+        serializer = OTPVerificationSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+
+            # Generate JWT token
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+
+            return Response({
+                "message": "Phone number verified successfully.",
+                "user_id": user.id,
+                "access_token": access_token,
+                "refresh_token": refresh_token
+            }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CompleteRegistrationView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(request_body=CompleteRegistrationSerializer)
+    def post(self, request, *args, **kwargs):
+        serializer = CompleteRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save(request.user)
+            return Response({"message": "Registration completed successfully.", "user_id": user.id}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserProfileSerializer
+
+    def get_object(self):
+        return self.request.user
+
+    def perform_update(self, serializer):
+        user = serializer.save()
+        if user.account_type == 'INDIVIDUAL':
+            individual_data = self.request.data.get('individual_user', {})
+            IndividualUser.objects.update_or_create(user=user, defaults=individual_data)
+        elif user.account_type == 'BUSINESS':
+            business_data = self.request.data.get('business_user', {})
+            BusinessUser.objects.update_or_create(user=user, defaults=business_data)
+
 
 class BeneficiaryCreateView(generics.CreateAPIView):
     serializer_class = BeneficiarySerializer
