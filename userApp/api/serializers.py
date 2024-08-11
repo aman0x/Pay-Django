@@ -22,6 +22,21 @@ class BusinessUserSerializer(serializers.ModelSerializer):
         model = BusinessUser
         fields = ['company_name', 'company_pan_no', 'company_pan_no_doc', 'company_adhaar_no', 'company_gst_no', 'company_gst_no_doc']
 
+class CustomUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'first_name', 'middle_name', 'last_name', 'nick_name', 'phone', 'account_type', 'profile_image']
+
+class IndividualUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IndividualUser
+        fields = ['pan_no', 'pan_no_doc', 'adhaar_no', 'adhaar_front_doc', 'adhaar_back_doc']
+
+class BusinessUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BusinessUser
+        fields = ['company_name', 'company_pan_no', 'company_pan_no_doc', 'company_adhaar_no', 'company_gst_no', 'company_gst_no_doc']
+
 class CompleteRegistrationSerializer(serializers.Serializer):
     individual_user = IndividualUserSerializer(required=False)
     business_user = BusinessUserSerializer(required=False)
